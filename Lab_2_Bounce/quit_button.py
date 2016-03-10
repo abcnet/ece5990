@@ -46,6 +46,7 @@ for my_text, text_pos in my_buttons.items():
 	
 pygame.display.flip()
 
+pos = 0;
 while True:
 	screen.fill(black)	#fill screen empty
 
@@ -55,14 +56,14 @@ while True:
 		screen.blit(text_surface, rect)
 	
 	pygame.display.flip()
-	
-	pos = 0;
+
 	for event in pygame.event.get():
-		if(event.type == pygame. MOUSEBUTTONDOWN):
+		if(event.type == pygame.MOUSEBUTTONDOWN):
 			pos = pygame.mouse.get_pos()
 		elif(event.type == pygame.MOUSEBUTTONUP):
 			pos = pygame.mouse.get_pos()
-	x,y = pos
+	x = pos(0)
+	y = pos(1)
 	if (y > 120):
 		if (x > 160):
 			sys.exit("quitting")

@@ -52,9 +52,7 @@ while True:
 			screen.fill(black)
 			text_surface = my_font.render('Hit at '+str(pos), True, (255,255,255))
 			screen.blit(text_surface,text_surface.get_rect(center=(100,120)))
-			text_surface = my_font.render(my_text, True, (255,255,255))
-			rect = text_surface.get_rect(center=text_pos)
-			screen.blit(text_surface, rect)
+			place_buttons()
 			pygame.display.flip()
 			x,y=pos
 			if x>200 and y>180:
@@ -66,9 +64,7 @@ while True:
 			print pos
 			screen.fill(black)
 			screen.blit(my_font.render('Hit at '+str(pos), True, (255,255,255)),text_surface.get_rect(center=(100,120)))
-			text_surface = my_font.render(my_text, True, (255,255,255))
-			rect = text_surface.get_rect(center=text_pos)
-			screen.blit(text_surface, rect)
+			place_buttons()
 			pygame.display.flip()
 		# pygame.display.flip()
 
