@@ -1,0 +1,78 @@
+1) Performance counter stats for 'python video_control.py':
+
+        126.617759      task-clock (msec)         #    0.025 CPUs utilized          
+                28      context-switches          #    0.221 K/sec                  
+                 0      cpu-migrations            #    0.000 K/sec                  
+               592      page-faults               #    0.005 M/sec                  
+        85,204,279      cycles                    #    0.673 GHz                    
+        33,076,670      instructions              #    0.39  insns per cycle        
+
+       5.134388163 seconds time elapsed
+
+2) Performance counter stats for 'python more_video_control_cb.py':
+
+       6720.593467      task-clock (msec)         #    0.662 CPUs utilized          
+           169,007      context-switches          #    0.025 M/sec                  
+                 1      cpu-migrations            #    0.000 K/sec                  
+               597      page-faults               #    0.089 K/sec                  
+     5,683,974,721      cycles                    #    0.846 GHz                    
+     1,905,177,402      instructions              #    0.34  insns per cycle        
+
+      10.146015438 seconds time elapsed
+3) (20ms): Performance counter stats for 'python video_control.py':
+
+        128.259703      task-clock (msec)         #    0.013 CPUs utilized          
+               502      context-switches          #    0.004 M/sec                  
+                 1      cpu-migrations            #    0.008 K/sec                  
+               595      page-faults               #    0.005 M/sec                  
+       114,288,430      cycles                    #    0.891 GHz                    
+        39,481,051      instructions              #    0.35  insns per cycle        
+
+      10.127703174 seconds time elapsed
+   (2ms): Performance counter stats for 'python video_control.py':
+
+        402.835919      task-clock (msec)         #    0.040 CPUs utilized
+             4,717      context-switches          #    0.012 M/sec
+                 1      cpu-migrations            #    0.002 K/sec
+               592      page-faults               #    0.001 M/sec
+       246,992,174      cycles                    #    0.613 GHz
+        93,783,753      instructions              #    0.38  insns per cycle
+
+      10.138656000 seconds time elapsed
+ 
+
+
+   (200us): Performance counter stats for 'python video_control.py':
+
+       1751.528476      task-clock (msec)         #    0.173 CPUs utilized          
+            31,702      context-switches          #    0.018 M/sec                  
+                 1      cpu-migrations            #    0.001 K/sec                  
+               594      page-faults               #    0.339 K/sec                  
+     1,200,243,099      cycles                    #    0.685 GHz                    
+       447,512,561      instructions              #    0.37  insns per cycle        
+
+      10.132038035 seconds time elapsed
+
+   (20us):  Performance counter stats for 'python video_control.py':
+
+       3441.019035      task-clock (msec)         #    0.340 CPUs utilized          
+            82,472      context-switches          #    0.024 M/sec                  
+                 0      cpu-migrations            #    0.000 K/sec                  
+               595      page-faults               #    0.173 K/sec                  
+     2,911,896,580      cycles                    #    0.846 GHz                    
+     1,101,621,901      instructions              #    0.38  insns per cycle        
+
+      10.110265330 seconds time elapsed
+ 
+
+   (no_sleep): Performance counter stats for 'python video_control.py':
+
+      10128.690242      task-clock (msec)         #    1.000 CPUs utilized          
+                24      context-switches          #    0.002 K/sec                  
+                 0      cpu-migrations            #    0.000 K/sec                  
+               589      page-faults               #    0.058 K/sec                  
+     9,076,434,102      cycles                    #    0.896 GHz                    
+     4,608,995,701      instructions              #    0.51  insns per cycle        
+
+      10.133644017 seconds time elapsed 
+

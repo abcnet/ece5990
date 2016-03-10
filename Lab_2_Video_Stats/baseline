@@ -1,0 +1,13 @@
+pi@zr54_mmm389:~/Desktop $ perf stat -e task-clock,context-switches,cpu-migrations,page-faults,cycles,instructions python cal_v1.py
+ Performance counter stats for 'python cal_v1.py':
+
+        102.786198      task-clock (msec)         #    0.327 CPUs utilized          
+                 5      context-switches          #    0.049 K/sec                  
+                 0      cpu-migrations            #    0.000 K/sec                  
+               521      page-faults               #    0.005 M/sec                  
+        71,405,125      cycles                    #    0.695 GHz                    
+        26,352,679      instructions              #    0.37  insns per cycle        
+
+       0.313926497 seconds time elapsed
+
+
