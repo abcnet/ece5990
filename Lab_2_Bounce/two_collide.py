@@ -28,9 +28,9 @@ GPIO.add_event_detect(17, GPIO.FALLING, callback=GPIO17_callback, bouncetime=300
 
 
 pygame.init()
-size = width, height = 640, 480
+size = width, height = 320, 240
 speed1 = [5.0,5.0]
-speed2 = [10.0,10.0]
+speed2 = [3.0,3.0]
 black = 0, 0, 0
 screen = pygame.display.set_mode(size)
 ball1 = pygame.image.load("image/magic_ball.png")

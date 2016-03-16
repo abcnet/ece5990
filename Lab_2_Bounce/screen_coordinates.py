@@ -51,7 +51,7 @@ while True:
 			print pos
 			screen.fill(black)
 			text_surface = my_font.render('Hit at '+str(pos), True, (255,255,255))
-			subprocess.check_output('echo "{0}" >> log'.format(str(pos)), shell=True)
+			subprocess.check_output('echo "{0}" >> hit_log'.format(str(pos)), shell=True)
 			screen.blit(text_surface,text_surface.get_rect(center=(160,120)))
 			place_buttons()
 			pygame.display.flip()
