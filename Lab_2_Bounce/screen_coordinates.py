@@ -51,7 +51,8 @@ while True:
 			print pos
 			screen.fill(black)
 			text_surface = my_font.render('Hit at '+str(pos), True, (255,255,255))
-			screen.blit(text_surface,text_surface.get_rect(center=(100,120)))
+			subprocess.check_output('echo "{0}" >> log'.format(str(pos)), shell=True)
+			screen.blit(text_surface,text_surface.get_rect(center=(160,120)))
 			place_buttons()
 			pygame.display.flip()
 			x,y=pos
@@ -59,14 +60,14 @@ while True:
 				GPIO.cleanup()
 				sys.exit("Quitting Bounce Program")
 
-		elif(event.type == pygame.MOUSEBUTTONUP):
-			pos = pygame.mouse.get_pos()
-			print pos
-			screen.fill(black)
-			screen.blit(my_font.render('Hit at '+str(pos), True, (255,255,255)),text_surface.get_rect(center=(100,120)))
-			place_buttons()
-			pygame.display.flip()
-		# pygame.display.flip()
+		# elif(event.type == pygame.MOUSEBUTTONUP):
+		# 	pos = pygame.mouse.get_pos()
+		# 	print pos
+		# 	screen.fill(black)
+		# 	screen.blit(my_font.render('Hit at '+str(pos), True, (255,255,255)),text_surface.get_rect(center=(100,120)))
+		# 	place_buttons()
+		# 	pygame.display.flip()
+		
 
 	# if y < 110:
 	# 	if x < 160:
