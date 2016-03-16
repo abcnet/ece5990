@@ -30,10 +30,11 @@ pygame.init()
 pygame.mouse.set_visible(False)
 screen = pygame.display.set_mode((320, 240))
 black = 0, 0, 0
-my_font = pygame.font.Font(None, 50)
+my_font = pygame.font.Font(None, 60)
+my_lower_font = pygame.font.Font(None, 30)
 
 my_buttons = {'Start':(60,200),'Quit':(260,200)}
-my_lower_buttons = {'Pause':(35,200), 'Fast':(90, 200), 'Slow':(150, 200), 'Back':(205,200)}
+my_lower_buttons = {'Pause':(50,200), 'Fast':(130,200), 'Slow':(200,200), 'Back':(280,200)}
 
 #define button placing function
 def place_buttons():
@@ -44,22 +45,27 @@ def place_buttons():
 
 def place_lower_buttons():
 	for my_text_lower, text_pos_lower in my_lower_buttons.items():
-		text_surface_lower = my_font.render(my_text_lower, True, (255,255,255))
+		text_surface_lower = my_lower_font.render(my_text_lower, True, (255,255,255))
 		rect_lower = text_surface_lower.get_rect(center=text_pos_lower)
 		screen.blit(text_surface_lower, rect_lower)
 
 
 #place top level buttons
 place_buttons()
+print "initialized buttons"
+
 
 #bring start screen to front display 
 pygame.display.flip()
+print "initialization: flipped screen"
 
 #setup inital collision parameters
 size = width, height = 320, 240
 
 speed1 = [5.0,5.0]
 speed2 = [3.0,3.0]
+orig1 = [0.0,0.0]
+orig2 = [0.0,0.0]
 black = 0, 0, 0
 
 #setup initial collision specs
@@ -73,6 +79,7 @@ d2=ball2rect.right-ball2rect.left
 newspeed1=[2.0,2.0]
 newspeed2=[1.0,1.0]
 
+print "initialized collision parameters"
 
 #indicate starting or not
 start=False
@@ -80,6 +87,7 @@ start=False
 #Defining Button functions
 
 def START():
+	global start
 	start = True
 
 def QUIT():
@@ -87,26 +95,42 @@ def QUIT():
 	sys.exit("Quitting top level collision program")
 
 def PAUSE():
-	start = False
+	global speed1
+	global speed2
+	global orig1
+	global orig2
+
+	temp1 = speed1
+	speed1 = orig1
+	orig1 = temp1
+
+	temp2 = speed2
+	speed2 = orig2
+	orig2 = temp2
+	print "PAUSE"
 
 def FAST():
-	speed1[0] += 1
-	speed1[1] += 1
-	speed2[0] += 1
-	speed2[1] += 1
+	global speed1
+	global speed2
+	speed1[0] += (1 if (speed1[0]>=0) else -1)
+	speed1[1] += (1 if (speed1[1]>=0) else -1)
+	speed2[0] += (1 if (speed2[0]>=0) else -1)
+	speed2[1] += (1 if (speed2[1]>=0) else -1)
+	print "FASTER"
 
 def SLOW():
-	speed1[0] -= 1
-	speed1[1] -= 1
-	speed2[0] -= 1
-	speed2[1] -= 1
-	if speed1[0] <1:
-		speed1 = [0.0,0.0]
-	if speed2[0]<1:
-		speed2 = [0.0,0.0]
+	global speed1
+	global speed2
+	speed1[0] -= (1 if (speed1[0]>=0) else -1)
+	speed1[1] -= (1 if (speed1[1]>=0) else -1)
+	speed2[0] -= (1 if (speed2[0]>=0) else -1)
+	speed2[1] -= (1 if (speed2[1]>=0) else -1)
+	print "SLOWER"
 
 def BACK():
+	global start
 	start=False
+	print "BACK"
 
 
 #starting top level screen animation
@@ -119,30 +143,30 @@ while True:
 			pos = pygame.mouse.get_pos()
 			print pos
 			place_buttons()
-			# pygame.display.flip()
+			pygame.display.flip()
 			x,y=pos
-			if x>200 and y>180:
+			if x>200 and y>160:
 				QUIT()
-			if x<120 and y>180:
+			if x<120 and y>160:
 				START()
+				
 	while start:
-		screen.fill(black)
-		place_lower_buttons()
-		pygame.display.flip()
+		
+		# pygame.display.flip()
 		for event in pygame.event.get():
 			if(event.type == pygame.MOUSEBUTTONDOWN):
 				pos = pygame.mouse.get_pos()
 				print pos
 				place_lower_buttons()
-				# pygame.display.flip()
+				pygame.display.flip()
 				x,y=pos
-				if x>0 and x<=60 and y>180:
+				if x>0 and x<=80 and y>160:
 					PAUSE()
-				if x<60 and x<=120 and y>180:
+				if x>80 and x<=160 and y>160:
 					FAST()
-				if x>120 and x<=180 and y>180:
+				if x>160 and x<=240 and y>160:
 					SLOW()
-				if x>180 and y>180:
+				if x>240 and y>160:
 					BACK()
 		
 		ball1rect = ball1rect.move(speed1)
@@ -190,7 +214,8 @@ while True:
 
 			speed2[0]=newspeed2[0]
 			speed2[1]=newspeed2[1]
-
+		screen.fill(black)
+		place_lower_buttons()
 		screen.blit(ball1, ball1rect)
 		screen.blit(ball2, ball2rect)
 		
