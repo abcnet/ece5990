@@ -5,7 +5,7 @@ import sys
 import os
 import time
 
-
+GPIO.cleanup()
 dc=7.5
 CHANNEL = 19
 freq =46
