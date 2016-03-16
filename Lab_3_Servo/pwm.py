@@ -5,10 +5,10 @@ import sys
 import os
 import time
 
-GPIO.cleanup()
+#GPIO.cleanup()
 dc=7.5
 CHANNEL = 19
-freq =46
+freq =46.51
 
 GPIO.setmode(GPIO.BCM) #Setforbroadcomnumberingnotboardnumbering
 
