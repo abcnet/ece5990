@@ -13,7 +13,7 @@ freq = 46.51
 cw=1.3
 no=1.5
 ccw=1.7
-
+# GPIO.cleanup()
 GPIO.setmode(GPIO.BCM) #Setforbroadcomnumberingnotboardnumbering
 
 # GPIO pin setup
@@ -86,9 +86,13 @@ while True:
 	servo_number = raw_input("Chooese server (1 or 2, q to quit): ")
 	if servo_number=="q":
 		# print "quiting"
+		p1.stop()
+		p2.stop()
 		sys.exit("Quitting Program")
 	direction = raw_input("Chooese direction (-1, 0 or 1, q to quit): ")
 	if direction=="q":
 		# print "quiting"
+		p1.stop()
+		p2.stop()
 		sys.exit("Quitting Program")
 	drive_servo(eval(servo_number), eval(direction))
