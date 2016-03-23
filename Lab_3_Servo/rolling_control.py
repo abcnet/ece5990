@@ -57,6 +57,7 @@ quit_button = ('Quit', (160,200), (255,255,255))
 p1 = GPIO.PWM(CHANNEL1, freq)
 p2 = GPIO.PWM(CHANNEL2, freq)
 pulses=[no,no]
+d=['STOP','STOP']
 def drive_servo(servo_number, direction):
 	if servo_number==1:
 		p=p1
@@ -68,31 +69,37 @@ def drive_servo(servo_number, direction):
 	if direction==0:
 		if servo_number==1:
 			pulses[0]=no
+			d[0]='STOP'
 		else:
 			pulses[1]=no
+			d[1]='STOP'
 		p.start(no/(20+no)*100.0)
 		p.ChangeFrequency(1000.0/(20+no))
 	elif direction<0:
 		if servo_number==1:
 			pulses[0]=ccw
+			d[0]='<==='
 		else:
 			pulses[1]=ccw
+			d[1]='<==='
 		p.start(ccw/(20+ccw)*100.0)
 		p.ChangeFrequency(1000.0/(20+ccw))
 		# p.ChangeDutyCycle(1.7/21.7)
 	elif direction>0:
 		if servo_number==1:
 			pulses[0]=cw
+			d[0]='===>'
 		else:
 			pulses[1]=cw
+			d[1]='===>'
 		p.start(cw/(20+cw)*100.0)
 		p.ChangeFrequency(1000.0/(20+cw))
 		# p.ChangeDutyCycle(1.3/21.3)
 	else:
 		print "error"
 
-def place_button(b):
-	text_surface = my_font.render(b[0], True, b[2])
+def place_button(b, font=my_font):
+	text_surface = font.render(b[0], True, b[2])
 	rect = text_surface.get_rect(center=b[1])
 	screen.blit(text_surface, rect)
 
@@ -117,13 +124,16 @@ kill = False
 def func():
 	global kill
 	while not kill:
-		servo_number = raw_input("Chooese server (1 or 2, q to quit): ")
+		servo_number = raw_input("Chooese servo (1 or 2, q to quit): ")
 		if servo_number=="q":
 			# print "quiting"
 			p1.stop()
 			p2.stop()
 			kill = True
 			sys.exit("Quitting Program")
+		elif servo_number!='1' and servo_number!='2':
+			print "Invalid servo"
+			continue
 		direction = raw_input("Chooese direction (-1, 0 or 1, q to quit): ")
 		if direction=="q":
 			# print "quiting"
@@ -131,6 +141,9 @@ def func():
 			p2.stop()
 			kill = True
 			sys.exit("Quitting Program")
+		elif direction!='0' and direction!='-1' and direction!='1':
+			print "Invalid direction"
+			continue
 		drive_servo(eval(servo_number), eval(direction))
 
 thread = threading.Thread(target=func)
@@ -140,6 +153,8 @@ panic=False
 while not kill:
 	screen.fill(black)
 	place_buttons(panic)
+	place_button(('Servo 1: {0}, Servo 2: {1}'.format(d[0],d[1]), (160,40), (255,255,255)),\
+	 font=pygame.font.Font(None, 30))
 	for event in pygame.event.get():
 		
 		if(event.type == pygame.MOUSEBUTTONDOWN):
