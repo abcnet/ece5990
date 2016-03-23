@@ -32,8 +32,7 @@ p = GPIO.PWM(CHANNEL, freq)
 # To change the duty cycle:
 # p.ChangeDutyCycle(dc) # where 0.0 <= dc <= 100.0
 
-time.sleep(3)
-# x = 1
+
 while True:
 	for i in range(10):
 		pulse = no-0.02*i
