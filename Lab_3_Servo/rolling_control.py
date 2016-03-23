@@ -4,6 +4,8 @@ import subprocess
 import sys
 import os
 import time
+import threading
+# code for setting up two threads from http://stackoverflow.com/questions/6286235/terminate-multiple-threads-when-any-thread-completes-a-task
 
 #setup touchscreen io
 os.putenv('SDL_FBDEV', '/dev/fb1')
@@ -29,8 +31,7 @@ GPIO.setup(CHANNEL2, GPIO.OUT)
 # GPIO.cleanup()
 
 
-# GPIO pin setup
-GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
 
 #define interrupt handlers
 def GPIO17_callback(channel):
@@ -39,7 +40,8 @@ def GPIO17_callback(channel):
 
 #interrupt detection
 GPIO.add_event_detect(17, GPIO.FALLING, callback=GPIO17_callback, bouncetime=300)
-
+# cw_char = u"\u21BB"
+ccw_char = u"\u21BA"
 
 #initialize pygame
 pygame.init()
@@ -51,6 +53,43 @@ my_font = pygame.font.Font(None, 50)
 resume_button = ('Resume', (160,120),(0,255,0))
 panic_button = ('Panic stop', (160,120),(255,0,0))
 quit_button = ('Quit', (160,200), (255,255,255))
+
+p1 = GPIO.PWM(CHANNEL1, freq)
+p2 = GPIO.PWM(CHANNEL2, freq)
+pulses=[no,no]
+def drive_servo(servo_number, direction):
+	if servo_number==1:
+		p=p1
+	elif servo_number==2:
+		p=p2
+	else:
+		print "error"
+		return
+	if direction==0:
+		if servo_number==1:
+			pulses[0]=no
+		else:
+			pulses[1]=no
+		p.start(no/(20+no)*100.0)
+		p.ChangeFrequency(1000.0/(20+no))
+	elif direction<0:
+		if servo_number==1:
+			pulses[0]=ccw
+		else:
+			pulses[1]=ccw
+		p.start(ccw/(20+ccw)*100.0)
+		p.ChangeFrequency(1000.0/(20+ccw))
+		# p.ChangeDutyCycle(1.7/21.7)
+	elif direction>0:
+		if servo_number==1:
+			pulses[0]=cw
+		else:
+			pulses[1]=cw
+		p.start(cw/(20+cw)*100.0)
+		p.ChangeFrequency(1000.0/(20+cw))
+		# p.ChangeDutyCycle(1.3/21.3)
+	else:
+		print "error"
 
 def place_button(b):
 	text_surface = my_font.render(b[0], True, b[2])
@@ -74,17 +113,35 @@ size = width, height = 320, 240
 
 
 black = 0, 0, 0
+kill = False
+def func():
+	global kill
+	while not kill:
+		servo_number = raw_input("Chooese server (1 or 2, q to quit): ")
+		if servo_number=="q":
+			# print "quiting"
+			p1.stop()
+			p2.stop()
+			kill = True
+			sys.exit("Quitting Program")
+		direction = raw_input("Chooese direction (-1, 0 or 1, q to quit): ")
+		if direction=="q":
+			# print "quiting"
+			p1.stop()
+			p2.stop()
+			kill = True
+			sys.exit("Quitting Program")
+		drive_servo(eval(servo_number), eval(direction))
 
-
-
+thread = threading.Thread(target=func)
+thread.start()
 
 panic=False
-while True:
+while not kill:
 	screen.fill(black)
 	place_buttons(panic)
 	for event in pygame.event.get():
 		
-
 		if(event.type == pygame.MOUSEBUTTONDOWN):
 			pos = pygame.mouse.get_pos()
 			print pos
@@ -97,11 +154,20 @@ while True:
 			x,y=pos
 			if 80<x<240 and y>180:
 				GPIO.cleanup()
+				kill = True
+				subprocess.check_output("kill -9 {0}".format(os.getpid()), shell=True)
 				sys.exit("Quitting Program")
 			if 0<x<240 and 80<y<160:
 				panic = not panic
-	if panic:
-		pass
+			if panic:
+				p1.stop()
+				p2.stop()
+			else:
+				
+				p1.start(pulses[0]/(20+pulses[0])*100.0)
+				p1.ChangeFrequency(1000.0/(20+pulses[0]))
+				p2.start(pulses[1]/(20+pulses[1])*100.0)
+				p2.ChangeFrequency(1000.0/(20+pulses[1]))
 		
 	pygame.display.flip()
 
