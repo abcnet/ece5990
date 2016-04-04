@@ -121,37 +121,57 @@ size = width, height = 320, 240
 
 black = 0, 0, 0
 kill = False
+panic=False
+
+def drive(l,r,t):
+	drive_servo(1, l)
+	drive_servo(2, r)
+	while t>0:
+		time.sleep(1)
+		if not panic:
+			t -= 1
+
 def func():
-	drive_servo(1, -1)
-	drive_servo(2, 1)
-	time.sleep(5)
+	global kill
+	drive(-1,1,5)
+	drive(0,0,3)
+	drive(1,-1,5)
+	drive(0,0,3)
+	drive(1,1,5)
+	drive(0,0,3)
+	drive(-1,-1,5)
+	drive(0,0,0)
 
-	drive_servo(1,0)
-	drive_servo(2,0)
-	time.sleep(3)
+	# drive_servo(1, -1)
+	# drive_servo(2, 1)
+	# time.sleep(5)
 
-	drive_servo(1, 1)
-	drive_servo(2, -1)
-	time.sleep(5)
+	# drive_servo(1,0)
+	# drive_servo(2,0)
+	# time.sleep(3)
 
-	drive_servo(1,0)
-	drive_servo(2,0)
-	time.sleep(3)
+	# drive_servo(1, 1)
+	# drive_servo(2, -1)
+	# time.sleep(5)
 
-	drive_servo(1, 1)
-	drive_servo(2, 1)
-	time.sleep(5)
+	# drive_servo(1,0)
+	# drive_servo(2,0)
+	# time.sleep(3)
 
-	drive_servo(1,0)
-	drive_servo(2,0)
-	time.sleep(3)
+	# drive_servo(1, 1)
+	# drive_servo(2, 1)
+	# time.sleep(5)
 
-	drive_servo(1, -1)
-	drive_servo(2, -1)
-	time.sleep(5)
+	# drive_servo(1,0)
+	# drive_servo(2,0)
+	# time.sleep(3)
 
-	drive_servo(1,0)
-	drive_servo(2,0)
+	# drive_servo(1, -1)
+	# drive_servo(2, -1)
+	# time.sleep(5)
+
+	# drive_servo(1,0)
+	# drive_servo(2,0)
 	kill=True
 	
 
@@ -160,8 +180,10 @@ def func():
 thread = threading.Thread(target=func)
 thread.start()
 
-panic=False
+
+
 while not kill:
+
 	screen.fill(black)
 	place_buttons(panic)
 	place_button(('Servo 1: {0}, Servo 2: {1}'.format(d[0],d[1]), (160,40), (255,255,255)),\
@@ -184,6 +206,7 @@ while not kill:
 				subprocess.check_output("kill -9 {0}".format(os.getpid()), shell=True)
 				sys.exit("Quitting Program")
 			if 0<x<240 and 80<y<160:
+				global panic
 				panic = not panic
 			if panic:
 				p1.stop()
