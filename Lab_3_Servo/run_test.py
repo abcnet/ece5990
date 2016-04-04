@@ -124,9 +124,19 @@ kill = False
 panic=False
 
 def drive(l,r,t):
-	drive_servo(1, l)
-	drive_servo(2, r)
+	if kill:
+		sys.exit("Quitting Program")
+	if l==0:
+		p1.stop()
+	else:
+		drive_servo(1, l)
+	if r==0:
+		p2.stop()
+	else:
+		drive_servo(2, r)
 	while t>0:
+		if kill:
+			sys.exit("Quitting Program")
 		time.sleep(1)
 		if not panic:
 			t -= 1
@@ -203,7 +213,7 @@ while not kill:
 			if 80<x<240 and y>180:
 				GPIO.cleanup()
 				kill = True
-				subprocess.check_output("kill -9 {0}".format(os.getpid()), shell=True)
+				# subprocess.check_output("kill -9 {0}".format(os.getpid()), shell=True)
 				sys.exit("Quitting Program")
 			if 0<x<240 and 80<y<160:
 				global panic
