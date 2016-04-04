@@ -128,10 +128,12 @@ def drive(l,r,t):
 		sys.exit("Quitting Program")
 	if l==0:
 		p1.stop()
+		d[0]='STOP'
 	else:
 		drive_servo(1, l)
 	if r==0:
 		p2.stop()
+		d[1]='STOP'
 	else:
 		drive_servo(2, r)
 	while t>0:
