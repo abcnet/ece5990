@@ -6,9 +6,9 @@ import os
 import time
 
 #GPIO.cleanup()
-dc=7.5
-CHANNEL = 19
-freq =46.51
+dc=25.0
+CHANNEL=5
+freq=10
 
 GPIO.setmode(GPIO.BCM) #Setforbroadcomnumberingnotboardnumbering
 
@@ -37,14 +37,13 @@ p.start(dc) # where dc is the duty cycle (0.0 <= dc <= 100.0)
 def GPIO17_callback(channel):
 	p.stop()
 	GPIO.cleanup()
-	sys.exit("Quitting Bounce Program")
+	sys.exit("Quitting PWM Program")
 
 def GPIO22_callback(channel):
-	p.stop()
+	p.start(dc)
 
 def GPIO23_callback(channel):
-	p.start(dc)
-	p.ChangeFrequency(freq)
+	p.stop()
 
 
 #interrupt detection
