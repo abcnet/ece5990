@@ -83,16 +83,24 @@ GPIO.add_event_detect(22, GPIO.FALLING, callback=GPIO22_callback, bouncetime=300
 
 
 while True:
-	servo_number = raw_input("Chooese server (1 or 2, q to quit): ")
+	servo_number = raw_input("Chooese servo (1 or 2, q to quit): ")
 	if servo_number=="q":
 		# print "quiting"
 		p1.stop()
 		p2.stop()
+		kill = True
 		sys.exit("Quitting Program")
+	elif servo_number!='1' and servo_number!='2':
+		print "Invalid servo"
+		continue
 	direction = raw_input("Chooese direction (-1, 0 or 1, q to quit): ")
 	if direction=="q":
 		# print "quiting"
 		p1.stop()
 		p2.stop()
+		kill = True
 		sys.exit("Quitting Program")
+	elif direction!='0' and direction!='-1' and direction!='1':
+		print "Invalid direction"
+		continue
 	drive_servo(eval(servo_number), eval(direction))

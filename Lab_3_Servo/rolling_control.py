@@ -58,7 +58,9 @@ p1 = GPIO.PWM(CHANNEL1, freq)
 p2 = GPIO.PWM(CHANNEL2, freq)
 pulses=[no,no]
 d=['STOP','STOP']
-def drive_servo(servo_number, direction):
+hist1=['STOP', 'STOP', 'STOP']
+hist2=['STOP', 'STOP', 'STOP']
+def drive_servo(servo_number, direction, update_hist):
 	if servo_number==1:
 		p=p1
 	elif servo_number==2:
@@ -70,18 +72,35 @@ def drive_servo(servo_number, direction):
 		if servo_number==1:
 			pulses[0]=no
 			d[0]='STOP'
+			directions[0]=0
+			if update_hist:
+				hist1.pop()
+				hist1.insert(0, d[0])
 		else:
 			pulses[1]=no
 			d[1]='STOP'
-		p.start(no/(20+no)*100.0)
-		p.ChangeFrequency(1000.0/(20+no))
+			directions[1]=0
+			if update_hist:
+				hist2.pop()
+				hist2.insert(0, d[0])
+		# p.start(no/(20+no)*100.0)
+		# p.ChangeFrequency(1000.0/(20+no))
+		p.stop()
 	elif direction<0:
 		if servo_number==1:
 			pulses[0]=ccw
 			d[0]='<==='
+			directions[0]=-1
+			if update_hist:
+				hist1.pop()
+				hist1.insert(0, d[0])
 		else:
 			pulses[1]=ccw
 			d[1]='<==='
+			directions[1]=-1
+			if update_hist:
+				hist2.pop()
+				hist2.insert(0, d[0])
 		p.start(ccw/(20+ccw)*100.0)
 		p.ChangeFrequency(1000.0/(20+ccw))
 		# p.ChangeDutyCycle(1.7/21.7)
@@ -89,9 +108,17 @@ def drive_servo(servo_number, direction):
 		if servo_number==1:
 			pulses[0]=cw
 			d[0]='===>'
+			directions[0]=1
+			if update_hist:
+				hist1.pop()
+				hist1.insert(0, d[0])
 		else:
 			pulses[1]=cw
 			d[1]='===>'
+			directions[1]=1
+			if update_hist:
+				hist2.pop()
+				hist2.insert(0, d[0])
 		p.start(cw/(20+cw)*100.0)
 		p.ChangeFrequency(1000.0/(20+cw))
 		# p.ChangeDutyCycle(1.3/21.3)
