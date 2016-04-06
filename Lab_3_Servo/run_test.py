@@ -59,7 +59,8 @@ p2 = GPIO.PWM(CHANNEL2, freq)
 pulses=[no,no]
 directions = [0, 0]
 d=['STOP','STOP']
-hist=[('STOP', 'STOP'), ('STOP', 'STOP'),('STOP', 'STOP')]
+hist1=['STOP', 'STOP', 'STOP']
+hist2=['STOP', 'STOP', 'STOP']
 def drive_servo(servo_number, direction):
 	if servo_number==1:
 		p=p1
@@ -73,10 +74,14 @@ def drive_servo(servo_number, direction):
 			pulses[0]=no
 			d[0]='STOP'
 			directions[0]=0
+			hist1.pop()
+			hist1.insert(0, d[0])
 		else:
 			pulses[1]=no
 			d[1]='STOP'
 			directions[1]=0
+			hist2.pop()
+			hist2.insert(0, d[0])
 		# p.start(no/(20+no)*100.0)
 		# p.ChangeFrequency(1000.0/(20+no))
 		p.stop()
@@ -85,10 +90,14 @@ def drive_servo(servo_number, direction):
 			pulses[0]=ccw
 			d[0]='<==='
 			directions[0]=-1
+			hist1.pop()
+			hist1.insert(0, d[0])
 		else:
 			pulses[1]=ccw
 			d[1]='<==='
 			directions[1]=-1
+			hist2.pop()
+			hist2.insert(0, d[0])
 		p.start(ccw/(20+ccw)*100.0)
 		p.ChangeFrequency(1000.0/(20+ccw))
 		# p.ChangeDutyCycle(1.7/21.7)
@@ -97,10 +106,14 @@ def drive_servo(servo_number, direction):
 			pulses[0]=cw
 			d[0]='===>'
 			directions[0]=1
+			hist1.pop()
+			hist1.insert(0, d[0])
 		else:
 			pulses[1]=cw
 			d[1]='===>'
 			directions[1]=1
+			hist2.pop()
+			hist2.insert(0, d[0])
 		p.start(cw/(20+cw)*100.0)
 		p.ChangeFrequency(1000.0/(20+cw))
 		# p.ChangeDutyCycle(1.3/21.3)
@@ -209,8 +222,12 @@ while not kill:
 
 	screen.fill(black)
 	place_buttons(panic)
-	place_button(('Servo 1: {0}, Servo 2: {1}'.format(d[0],d[1]), (160,40), (255,255,255)),\
-	 font=pygame.font.Font(None, 30))
+	place_button(('Servo 1: {0}, Servo 2: {1}'.format(hist1[0],hist2[0]), (160,30), (255,255,255)),\
+	 font=pygame.font.Font(None, 20))
+	place_button(('Servo 1: {0}, Servo 2: {1}'.format(hist1[1],hist2[1]), (160,60), (255,255,255)),\
+	 font=pygame.font.Font(None, 20))
+	place_button(('Servo 1: {0}, Servo 2: {1}'.format(hist1[2],hist2[2]), (160,90), (255,255,255)),\
+	 font=pygame.font.Font(None, 20))
 	for event in pygame.event.get():
 		
 		if(event.type == pygame.MOUSEBUTTONDOWN):
