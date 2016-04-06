@@ -57,7 +57,9 @@ quit_button = ('Quit', (160,200), (255,255,255))
 p1 = GPIO.PWM(CHANNEL1, freq)
 p2 = GPIO.PWM(CHANNEL2, freq)
 pulses=[no,no]
+directions = [0, 0]
 d=['STOP','STOP']
+hist=[('STOP', 'STOP'), ('STOP', 'STOP'),('STOP', 'STOP')]
 def drive_servo(servo_number, direction):
 	if servo_number==1:
 		p=p1
@@ -70,18 +72,23 @@ def drive_servo(servo_number, direction):
 		if servo_number==1:
 			pulses[0]=no
 			d[0]='STOP'
+			directions[0]=0
 		else:
 			pulses[1]=no
 			d[1]='STOP'
-		p.start(no/(20+no)*100.0)
-		p.ChangeFrequency(1000.0/(20+no))
+			directions[1]=0
+		# p.start(no/(20+no)*100.0)
+		# p.ChangeFrequency(1000.0/(20+no))
+		p.stop()
 	elif direction<0:
 		if servo_number==1:
 			pulses[0]=ccw
 			d[0]='<==='
+			directions[0]=-1
 		else:
 			pulses[1]=ccw
 			d[1]='<==='
+			directions[1]=-1
 		p.start(ccw/(20+ccw)*100.0)
 		p.ChangeFrequency(1000.0/(20+ccw))
 		# p.ChangeDutyCycle(1.7/21.7)
@@ -89,9 +96,11 @@ def drive_servo(servo_number, direction):
 		if servo_number==1:
 			pulses[0]=cw
 			d[0]='===>'
+			directions[0]=1
 		else:
 			pulses[1]=cw
 			d[1]='===>'
+			directions[1]=1
 		p.start(cw/(20+cw)*100.0)
 		p.ChangeFrequency(1000.0/(20+cw))
 		# p.ChangeDutyCycle(1.3/21.3)
@@ -129,11 +138,13 @@ def drive(l,r,t):
 	if l==0:
 		p1.stop()
 		d[0]='STOP'
+		directions[0]=0
 	else:
 		drive_servo(1, l)
 	if r==0:
 		p2.stop()
 		d[1]='STOP'
+		directions[1]=0
 	else:
 		drive_servo(2, r)
 	while t>0:
@@ -224,11 +235,12 @@ while not kill:
 				p1.stop()
 				p2.stop()
 			else:
-				
-				p1.start(pulses[0]/(20+pulses[0])*100.0)
-				p1.ChangeFrequency(1000.0/(20+pulses[0]))
-				p2.start(pulses[1]/(20+pulses[1])*100.0)
-				p2.ChangeFrequency(1000.0/(20+pulses[1]))
+				drive_servo(1,directions[0])
+				drive_servo(2,directions[1])
+				# p1.start(pulses[0]/(20+pulses[0])*100.0)
+				# p1.ChangeFrequency(1000.0/(20+pulses[0]))
+				# p2.start(pulses[1]/(20+pulses[1])*100.0)
+				# p2.ChangeFrequency(1000.0/(20+pulses[1]))
 		
 	pygame.display.flip()
 
