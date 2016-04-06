@@ -57,6 +57,7 @@ quit_button = ('Quit', (160,200), (255,255,255))
 p1 = GPIO.PWM(CHANNEL1, freq)
 p2 = GPIO.PWM(CHANNEL2, freq)
 pulses=[no,no]
+directions = [0, 0]
 d=['STOP','STOP']
 hist1=['STOP', 'STOP', 'STOP']
 hist2=['STOP', 'STOP', 'STOP']
@@ -82,7 +83,7 @@ def drive_servo(servo_number, direction, update_hist):
 			directions[1]=0
 			if update_hist:
 				hist2.pop()
-				hist2.insert(0, d[0])
+				hist2.insert(0, d[1])
 		# p.start(no/(20+no)*100.0)
 		# p.ChangeFrequency(1000.0/(20+no))
 		p.stop()
@@ -100,7 +101,7 @@ def drive_servo(servo_number, direction, update_hist):
 			directions[1]=-1
 			if update_hist:
 				hist2.pop()
-				hist2.insert(0, d[0])
+				hist2.insert(0, d[1])
 		p.start(ccw/(20+ccw)*100.0)
 		p.ChangeFrequency(1000.0/(20+ccw))
 		# p.ChangeDutyCycle(1.7/21.7)
@@ -118,7 +119,7 @@ def drive_servo(servo_number, direction, update_hist):
 			directions[1]=1
 			if update_hist:
 				hist2.pop()
-				hist2.insert(0, d[0])
+				hist2.insert(0, d[1])
 		p.start(cw/(20+cw)*100.0)
 		p.ChangeFrequency(1000.0/(20+cw))
 		# p.ChangeDutyCycle(1.3/21.3)
@@ -171,7 +172,7 @@ def func():
 		elif direction!='0' and direction!='-1' and direction!='1':
 			print "Invalid direction"
 			continue
-		drive_servo(eval(servo_number), eval(direction))
+		drive_servo(eval(servo_number), eval(direction), True)
 
 thread = threading.Thread(target=func)
 thread.start()
@@ -180,8 +181,12 @@ panic=False
 while not kill:
 	screen.fill(black)
 	place_buttons(panic)
-	place_button(('Servo 1: {0}, Servo 2: {1}'.format(d[0],d[1]), (160,40), (255,255,255)),\
-	 font=pygame.font.Font(None, 30))
+	place_button(('Servo 1: {0}, Servo 2: {1}'.format(hist1[0],hist2[0]), (160,20), (255,255,255)),\
+	 font=pygame.font.Font(None, 20))
+	place_button(('Servo 1: {0}, Servo 2: {1}'.format(hist1[1],hist2[1]), (160,50), (255,255,255)),\
+	 font=pygame.font.Font(None, 20))
+	place_button(('Servo 1: {0}, Servo 2: {1}'.format(hist1[2],hist2[2]), (160,80), (255,255,255)),\
+	 font=pygame.font.Font(None, 20))
 	for event in pygame.event.get():
 		
 		if(event.type == pygame.MOUSEBUTTONDOWN):
@@ -205,11 +210,8 @@ while not kill:
 				p1.stop()
 				p2.stop()
 			else:
-				
-				p1.start(pulses[0]/(20+pulses[0])*100.0)
-				p1.ChangeFrequency(1000.0/(20+pulses[0]))
-				p2.start(pulses[1]/(20+pulses[1])*100.0)
-				p2.ChangeFrequency(1000.0/(20+pulses[1]))
+				drive_servo(1,directions[0], False)
+				drive_servo(2,directions[1], False)
 		
 	pygame.display.flip()
 

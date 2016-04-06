@@ -83,7 +83,7 @@ def drive_servo(servo_number, direction, update_hist):
 			directions[1]=0
 			if update_hist:
 				hist2.pop()
-				hist2.insert(0, d[0])
+				hist2.insert(0, d[1])
 		# p.start(no/(20+no)*100.0)
 		# p.ChangeFrequency(1000.0/(20+no))
 		p.stop()
@@ -101,7 +101,7 @@ def drive_servo(servo_number, direction, update_hist):
 			directions[1]=-1
 			if update_hist:
 				hist2.pop()
-				hist2.insert(0, d[0])
+				hist2.insert(0, d[1])
 		p.start(ccw/(20+ccw)*100.0)
 		p.ChangeFrequency(1000.0/(20+ccw))
 		# p.ChangeDutyCycle(1.7/21.7)
@@ -119,7 +119,7 @@ def drive_servo(servo_number, direction, update_hist):
 			directions[1]=1
 			if update_hist:
 				hist2.pop()
-				hist2.insert(0, d[0])
+				hist2.insert(0, d[1])
 		p.start(cw/(20+cw)*100.0)
 		p.ChangeFrequency(1000.0/(20+cw))
 		# p.ChangeDutyCycle(1.3/21.3)
