@@ -61,7 +61,7 @@ directions = [0, 0]
 d=['STOP','STOP']
 hist1=['STOP', 'STOP', 'STOP']
 hist2=['STOP', 'STOP', 'STOP']
-def drive_servo(servo_number, direction):
+def drive_servo(servo_number, direction, update_hist):
 	if servo_number==1:
 		p=p1
 	elif servo_number==2:
@@ -74,14 +74,16 @@ def drive_servo(servo_number, direction):
 			pulses[0]=no
 			d[0]='STOP'
 			directions[0]=0
-			hist1.pop()
-			hist1.insert(0, d[0])
+			if update_hist:
+				hist1.pop()
+				hist1.insert(0, d[0])
 		else:
 			pulses[1]=no
 			d[1]='STOP'
 			directions[1]=0
-			hist2.pop()
-			hist2.insert(0, d[0])
+			if update_hist:
+				hist2.pop()
+				hist2.insert(0, d[0])
 		# p.start(no/(20+no)*100.0)
 		# p.ChangeFrequency(1000.0/(20+no))
 		p.stop()
@@ -90,14 +92,16 @@ def drive_servo(servo_number, direction):
 			pulses[0]=ccw
 			d[0]='<==='
 			directions[0]=-1
-			hist1.pop()
-			hist1.insert(0, d[0])
+			if update_hist:
+				hist1.pop()
+				hist1.insert(0, d[0])
 		else:
 			pulses[1]=ccw
 			d[1]='<==='
 			directions[1]=-1
-			hist2.pop()
-			hist2.insert(0, d[0])
+			if update_hist:
+				hist2.pop()
+				hist2.insert(0, d[0])
 		p.start(ccw/(20+ccw)*100.0)
 		p.ChangeFrequency(1000.0/(20+ccw))
 		# p.ChangeDutyCycle(1.7/21.7)
@@ -106,14 +110,16 @@ def drive_servo(servo_number, direction):
 			pulses[0]=cw
 			d[0]='===>'
 			directions[0]=1
-			hist1.pop()
-			hist1.insert(0, d[0])
+			if update_hist:
+				hist1.pop()
+				hist1.insert(0, d[0])
 		else:
 			pulses[1]=cw
 			d[1]='===>'
 			directions[1]=1
-			hist2.pop()
-			hist2.insert(0, d[0])
+			if update_hist:
+				hist2.pop()
+				hist2.insert(0, d[0])
 		p.start(cw/(20+cw)*100.0)
 		p.ChangeFrequency(1000.0/(20+cw))
 		# p.ChangeDutyCycle(1.3/21.3)
@@ -148,18 +154,8 @@ panic=False
 def drive(l,r,t):
 	if kill:
 		sys.exit("Quitting Program")
-	if l==0:
-		p1.stop()
-		d[0]='STOP'
-		directions[0]=0
-	else:
-		drive_servo(1, l)
-	if r==0:
-		p2.stop()
-		d[1]='STOP'
-		directions[1]=0
-	else:
-		drive_servo(2, r)
+	drive_servo(1, l, True)
+	drive_servo(2, r, True)
 	while t>0:
 		if kill:
 			sys.exit("Quitting Program")
@@ -222,11 +218,11 @@ while not kill:
 
 	screen.fill(black)
 	place_buttons(panic)
-	place_button(('Servo 1: {0}, Servo 2: {1}'.format(hist1[0],hist2[0]), (160,30), (255,255,255)),\
+	place_button(('Servo 1: {0}, Servo 2: {1}'.format(hist1[0],hist2[0]), (160,20), (255,255,255)),\
 	 font=pygame.font.Font(None, 20))
-	place_button(('Servo 1: {0}, Servo 2: {1}'.format(hist1[1],hist2[1]), (160,60), (255,255,255)),\
+	place_button(('Servo 1: {0}, Servo 2: {1}'.format(hist1[1],hist2[1]), (160,50), (255,255,255)),\
 	 font=pygame.font.Font(None, 20))
-	place_button(('Servo 1: {0}, Servo 2: {1}'.format(hist1[2],hist2[2]), (160,90), (255,255,255)),\
+	place_button(('Servo 1: {0}, Servo 2: {1}'.format(hist1[2],hist2[2]), (160,80), (255,255,255)),\
 	 font=pygame.font.Font(None, 20))
 	for event in pygame.event.get():
 		
@@ -252,8 +248,8 @@ while not kill:
 				p1.stop()
 				p2.stop()
 			else:
-				drive_servo(1,directions[0])
-				drive_servo(2,directions[1])
+				drive_servo(1,directions[0], False)
+				drive_servo(2,directions[1], False)
 				# p1.start(pulses[0]/(20+pulses[0])*100.0)
 				# p1.ChangeFrequency(1000.0/(20+pulses[0]))
 				# p2.start(pulses[1]/(20+pulses[1])*100.0)
