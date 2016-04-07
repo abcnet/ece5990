@@ -15,9 +15,9 @@ int main (void)
   for (;;)
   {
     digitalWrite (LED, 1) ;     // On
-    delay (100) ;               // mS
+    delay (1) ;               // mS
     digitalWrite (LED, 0) ;     // Off
-    delay (100) ;
+    delay (1) ;
   }
   return 0 ;
 }
