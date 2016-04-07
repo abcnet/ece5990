@@ -6,18 +6,20 @@
 
 int main (void)
 {
-  printf ("Blinking\n") ;
+  printf ("Blinking\n");
 
   wiringPiSetup();
 
-  pinMode(LED, OUTPUT) ;
+  pinMode(LED, OUTPUT);
 
-  for (;;)
+  for (int i = 0;i<2;i++)
   {
-    digitalWrite (LED, 1) ;     // On
-    delay (100) ;               // mS
-    digitalWrite (LED, 0) ;     // Off
-    delay (100) ;
+    digitalWrite (LED, 1);     // On
+    delay (1);               // mS
+    printf ("Blinking\n");
+    digitalWrite (LED, 0);     // Off
+    delay (1);
+    delay (30000);
   }
   return 0 ;
 }

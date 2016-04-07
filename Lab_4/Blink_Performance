@@ -1,0 +1,33 @@
+CPUs not loaded (with 30 second loop, 3 loops)
+
+Permance counter stats for './pwm1':
+
+          6.126458      task-clock (msec)         #    0.000 CPUs utilized          
+                 9      context-switches          #    0.001 M/sec                  
+                 0      cpu-migrations            #    0.000 K/sec                  
+                65      page-faults               #    0.011 M/sec                  
+         3,616,813      cycles                    #    0.590 GHz                    
+   <not supported>      stalled-cycles-frontend  
+   <not supported>      stalled-cycles-backend   
+         1,054,671      instructions              #    0.29  insns per cycle        
+           116,944      branches                  #   19.088 M/sec                  
+            32,598      branch-misses             #   27.87% of all branches        
+
+      60.013171560 seconds time elapsed
+
+CPUs loaded!
+Performance counter stats for './pwm1':
+
+          4.393958      task-clock (msec)         #    0.000 CPUs utilized          
+                 7      context-switches          #    0.002 M/sec                  
+                 0      cpu-migrations            #    0.000 K/sec                  
+                65      page-faults               #    0.015 M/sec                  
+         3,898,902      cycles                    #    0.887 GHz                    
+   <not supported>      stalled-cycles-frontend  
+   <not supported>      stalled-cycles-backend   
+         1,046,071      instructions              #    0.27  insns per cycle        
+           115,641      branches                  #   26.318 M/sec                  
+            32,033      branch-misses             #   27.70% of all branches        
+
+      60.015826015 seconds time elapsed
+
