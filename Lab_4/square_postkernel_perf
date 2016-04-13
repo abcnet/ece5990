@@ -1,0 +1,18 @@
+Perrmance counter stats for './square':
+
+         23.985005      task-clock (msec)         #    0.000 CPUs utilized          
+                63      context-switches          #    0.003 M/sec                  
+                 0      cpu-migrations            #    0.000 K/sec                  
+                53      page-faults               #    0.002 M/sec                  
+        16,597,232      cycles                    #    0.692 GHz                    
+   <not supported>      stalled-cycles-frontend  
+   <not supported>      stalled-cycles-backend   
+         7,981,881      instructions              #    0.48  insns per cycle        
+           864,132      branches                  #   36.028 M/sec                  
+           165,140      branch-misses             #   19.11% of all branches        
+
+     116.579627093 seconds time elapsed
+
+			delay(30000);
+		}
+
