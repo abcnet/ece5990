@@ -12,14 +12,14 @@ int main (void)
 
   pinMode(LED, OUTPUT);
 
-  for (int i = 0;i<2;i++)
+  for (int i = 0;i<10;i++)
   {
     digitalWrite (LED, 1);     // On
-    delay (1);               // mS
+    delay (500);               // mS
     printf ("Blinking\n");
     digitalWrite (LED, 0);     // Off
-    delay (1);
-    delay (30000);
+    delay (500);
+    //delay (30000);
   }
   return 0 ;
 }

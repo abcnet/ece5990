@@ -1,0 +1,17 @@
+elapsed time = 22.51786
+
+ Performance counter stats for './sort_v1':
+
+      22471.342414      task-clock (msec)         #    0.939 CPUs utilized          
+            50,604      context-switches          #    0.002 M/sec                  
+               103      cpu-migrations            #    0.005 K/sec                  
+                79      page-faults               #    0.004 K/sec                  
+    20,010,975,395      cycles                    #    0.891 GHz                    
+   <not supported>      stalled-cycles-frontend  
+   <not supported>      stalled-cycles-backend   
+    11,930,364,630      instructions              #    0.60  insns per cycle        
+     1,114,929,794      branches                  #   49.616 M/sec                  
+       356,164,591      branch-misses             #   31.95% of all branches        
+
+      23.942458893 seconds time elapsed
+
