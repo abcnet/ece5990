@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
 {
         struct timespec t;
         struct sched_param param;
-        int interval = 500000000; /* 500ms*/
+        int interval = 50000; /* 500us*/
 
         /* Declare ourself as a real time task */
 
@@ -67,8 +67,10 @@ int main(int argc, char* argv[])
 
                 /* do the stuff */
 		on ^= 1;
-		digitalWrite (LED, on);     // On or off
-			
+		digitalWrite (LED, on);     // On or off			
+		if(on == 0){
+			delay(30000);
+		}
                 /* calculate next shot */
                 t.tv_nsec += interval;
 
