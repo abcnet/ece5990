@@ -7,21 +7,29 @@ camera = picamera.PiCamera()
 camera.resolution = (640, 480)
 camera.framerate = 24
 
-UDP_HOST = '0.0.0.0'
+
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+UDP_HOST = socket.gethostname() 
 UDP_PORT = 8000
-server_socket = socket.socket()
-server_socket.bind((HOST, PORT))
-server_socket.listen(0)
+print socket.gethostbyname(UDP_HOST)
+server_socket.bind((UDP_HOST, UDP_PORT))
+
+initial_socket = socket.socket()
+TCP_HOST = ''
+TCP_PORT = 8001
+initial_socket.bind((TCP_HOST, TCP_PORT))
+initial_socket.listen(5)
 print 'Socket now listening'
 
 # Accept a single connection and make a file-like object out of it
-connection = server_socket.accept()[0].makefile('wb')
+connection = initial_socket.accept()[0].makefile('wb')
 try:
     camera.start_recording(connection, format='h264')
     camera.wait_recording(10)
     camera.stop_recording()
 finally:
     connection.close()
-    server_socket.close()
+    initial_socket.close()
+    #server_socket.close()
 # time.sleep(30);
     camera.close()
