@@ -1,11 +1,16 @@
 import getopt
 import socket
 import sys
+import subprocess
+
+import datetime
 
 
-
-host = "255.255.255.255"
+host = "0.0.0.0"
 port = 8765
+
+
+
 # Instead, you can pass command-line arguments
 # -h/--host [IP] -p/--port [PORT]
 # to put your server on a different IP/port.
