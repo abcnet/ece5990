@@ -2,14 +2,133 @@ import getopt
 import socket
 import sys
 import subprocess
+import RPi.GPIO as GPIO
+import subprocess
+import sys
+import os
+import time
+import threading
+# code for setting up two threads from http://stackoverflow.com/questions/6286235/terminate-multiple-threads-when-any-thread-completes-a-task
 
+#setup touchscreen io
+os.putenv('SDL_FBDEV', '/dev/fb1')
+os.putenv('SDL_MOUSEDRV', 'TSLIB')
+os.putenv('SDL_MOUSEDEV', '/dev/input/touchscreen')
+CHANNEL1 = 19
+CHANNEL2 = 16
+freq = 46.51
+cw=1.3
+no=1.5
+ccw=1.7
+# GPIO.cleanup()
+GPIO.setmode(GPIO.BCM) #Setforbroadcomnumberingnotboardnumbering
+
+# GPIO pin setup
+GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(CHANNEL1, GPIO.OUT)
+GPIO.setup(CHANNEL2, GPIO.OUT)
+# GPIO.cleanup()
+
+
+
+
+#define interrupt handlers
+def GPIO17_callback(channel):
+    GPIO.cleanup()
+    sys.exit("Quitting Server")
+
+#interrupt detection
+GPIO.add_event_detect(17, GPIO.FALLING, callback=GPIO17_callback, bouncetime=300)
+p1 = GPIO.PWM(CHANNEL1, freq)
+p2 = GPIO.PWM(CHANNEL2, freq)
+pulses=[no,no]
+directions = [0, 0]
+d=['STOP','STOP']
+hist1=['STOP', 'STOP', 'STOP']
+hist2=['STOP', 'STOP', 'STOP']
+def drive_servo(servo_number, direction, update_hist):
+    if servo_number==1:
+        p=p1
+    elif servo_number==2:
+        p=p2
+    else:
+        print "error"
+        return
+    if direction==0:
+        if servo_number==1:
+            pulses[0]=no
+            d[0]='STOP'
+            directions[0]=0
+            if update_hist:
+                hist1.pop()
+                hist1.insert(0, d[0])
+        else:
+            pulses[1]=no
+            d[1]='STOP'
+            directions[1]=0
+            if update_hist:
+                hist2.pop()
+                hist2.insert(0, d[1])
+        # p.start(no/(20+no)*100.0)
+        # p.ChangeFrequency(1000.0/(20+no))
+        p.stop()
+    elif direction<0:
+        if servo_number==1:
+            pulses[0]=ccw
+            d[0]='<==='
+            directions[0]=-1
+            if update_hist:
+                hist1.pop()
+                hist1.insert(0, d[0])
+        else:
+            pulses[1]=ccw
+            d[1]='<==='
+            directions[1]=-1
+            if update_hist:
+                hist2.pop()
+                hist2.insert(0, d[1])
+        p.start(ccw/(20+ccw)*100.0)
+        p.ChangeFrequency(1000.0/(20+ccw))
+        # p.ChangeDutyCycle(1.7/21.7)
+    elif direction>0:
+        if servo_number==1:
+            pulses[0]=cw
+            d[0]='===>'
+            directions[0]=1
+            if update_hist:
+                hist1.pop()
+                hist1.insert(0, d[0])
+        else:
+            pulses[1]=cw
+            d[1]='===>'
+            directions[1]=1
+            if update_hist:
+                hist2.pop()
+                hist2.insert(0, d[1])
+        p.start(cw/(20+cw)*100.0)
+        p.ChangeFrequency(1000.0/(20+cw))
+        # p.ChangeDutyCycle(1.3/21.3)
+    else:
+        print "error"
+
+def drive(l,r,t):
+    if kill:
+        sys.exit("Quitting Program")
+    drive_servo(1, l, True)
+    drive_servo(2, r, True)
+    while t>0:
+        if kill:
+            sys.exit("Quitting Program")
+        time.sleep(1)
+        if not panic:
+            t -= 1
 import datetime
 
 
 host = "0.0.0.0"
 port = 8765
 
-
+DEBUG = True
 
 # Instead, you can pass command-line arguments
 # -h/--host [IP] -p/--port [PORT]
@@ -19,8 +138,8 @@ from threading import Thread, Lock, Condition, Semaphore
 from datetime import datetime
 from shutil import copyfile
 
-nthreads = 32
-backupGroup = 32
+nthreads = 1
+# backupGroup = 32
 IDLE = 0
 AFTER_HELO = 1
 AFTER_FROM = 2
@@ -67,7 +186,7 @@ def checkCommand(l):
             return RCPT_TO, 0
     return ILLEGAL, 0
 
-f = open('mailbox', 'w')
+# f = open('mailbox', 'w')
 
 class ConnectionHandler:
     """Handles a single client request"""
@@ -80,7 +199,7 @@ class ConnectionHandler:
         self.socket = socket
 
     def handle(self):
-        global f
+        # global f
         state = IDLE
         self.socket.send("220 zr54 SMTP CS4410MP3\r\n")
         self.socket.settimeout(TIMEOUT)
@@ -104,6 +223,8 @@ class ConnectionHandler:
                         return
                     else:
                         self.socket.settimeout(TIMEOUT - elapsed)
+                if DEBUG:
+                    print stringbuffer
                 index = stringbuffer.find('\r\n')
                 commandstring = stringbuffer[:index]
                 # print commandstring
@@ -199,18 +320,7 @@ class ConnectionHandler:
                             ConnectionHandler.locked = True
                             ConnectionHandler.count += 1
                             tmpcount = ConnectionHandler.count
-                            f.write('Received: from ' + clientname + ' by zr54 (CS4410MP3)\n'
-                                + 'Number: %d\n' % ConnectionHandler.count
-                                + 'From: ' + sender + '\n'
-                                + 'To: ' + ', '.join(recipients) + '\n\n'
-                                + '\n'.join(data) + '\n\n')
-                            f.flush()
-                            if tmpcount % backupGroup == 0:
-                                # backup mailbox in groups of 32
-                                copyfile('mailbox', 'mailbox.%d-%d' %
-                                 (tmpcount - backupGroup + 1, tmpcount))
-                                f.close()
-                                f = open('mailbox', 'w')
+                           
                             ConnectionHandler.locked = False
                             ConnectionHandler.cond.notify()
                         self.socket.send("250 OK: delivered message %d\r\n" % tmpcount)
