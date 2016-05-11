@@ -4,7 +4,7 @@ import sys
 
 
 
-host = "127.0.0.1"
+host = "255.255.255.255"
 port = 8765
 # Instead, you can pass command-line arguments
 # -h/--host [IP] -p/--port [PORT]
