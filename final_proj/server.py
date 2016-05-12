@@ -99,7 +99,7 @@ from shutil import copyfile
 
 from test1 import postIP
 
-nthreads = 1
+nthreads = 2
 # backupGroup = 32
 IDLE = 0
 AFTER_HELO = 1
@@ -107,7 +107,7 @@ AFTER_FROM = 2
 AFTER_TO = 3
 AFTER_DATA = 4
 
-TIMEOUT = 10000.0
+TIMEOUT = 10.0
 
 DEBUG = True
 
@@ -231,15 +231,16 @@ class ConnectionHandler:
                     
                     self.socket.send("Success %s\r\n" % commandstring)
                     if DEBUG:
-                        print 'Sent "Success %s\r\n" to iPhone' % commandstring
+                        print 'Sent "Success %s\\r\\n" to iPhone' % commandstring
                     self.socket.settimeout(TIMEOUT)
                 else:
                     
                     self.socket.send("Failed %s\r\n" % commandstring)
                     if DEBUG:
-                        print 'Sent "Failed %s\r\n" to iPhone' % commandstring
+                        print 'Sent "Failed %s\\r\\n" to iPhone' % commandstring
                     self.socket.settimeout(TIMEOUT)
-
+                self.socket.close()
+                return
                 # c, c2 = checkCommand(command)
                 # if state != AFTER_DATA and c == ILLEGAL:
                 #     # illegal command
@@ -346,7 +347,8 @@ class ConnectionHandler:
                 self.socket.send('From RPi server Error: timeout exceeded\r\n')
                 self.socket.close()
                 return
-            except socket.error:
+            except socket.error as e:
+                print e
                 self.socket.close()
                 return
 

@@ -50,7 +50,7 @@ def postIP():
     data = {'ip' : ip, 'time': datetime.datetime.now()}
 
     snapshot = firebase.post('/ip', data)
-    # print(snapshot['name'])
+    print 'IP', ip, 'posted to firebase'
 
     def callback_get(response):
         # with open('/dev/null', 'w') as f:
