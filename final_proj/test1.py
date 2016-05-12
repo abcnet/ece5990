@@ -23,8 +23,8 @@ import datetime
 
 from firebase.firebase import FirebaseApplication, FirebaseAuthentication
 
+def postIP():
 
-if __name__ == '__main__':
     SECRET = 'D9H4yWL1t3AhHs4kMiLUZYyo4LtemKyj39me0heV'
     DSN = 'https://ece5990.firebaseio.com'
     EMAIL = 'zyren00@gmail.com'
@@ -58,3 +58,5 @@ if __name__ == '__main__':
         # print(response)
         pass
     firebase.get_async('/ip', snapshot['name'], callback=callback_get)
+if __name__ == '__main__':
+    postIP()
