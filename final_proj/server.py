@@ -2,13 +2,19 @@ import getopt
 import socket
 import sys
 
-import RPi.GPIO as GPIO
+
 import subprocess
 import sys
 import os
 import time
 import threading
-import picamera
+
+
+ON_RPI = False if sys.platform.find('darwin') > -1 else True
+if ON_RPI:
+    import RPi.GPIO as GPIO
+    import picamera
+
 # code for setting up two threads from http://stackoverflow.com/questions/6286235/terminate-multiple-threads-when-any-thread-completes-a-task
 
 #setup touchscreen io
@@ -21,14 +27,15 @@ freq = 46.51
 cw=1.3
 no=1.5
 ccw=1.7
-# GPIO.cleanup()
-GPIO.setmode(GPIO.BCM) #Setforbroadcomnumberingnotboardnumbering
+if ON_RPI:
+    GPIO.cleanup()
+    GPIO.setmode(GPIO.BCM) #Setforbroadcomnumberingnotboardnumbering
 
-# GPIO pin setup
-GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(CHANNEL1, GPIO.OUT)
-GPIO.setup(CHANNEL2, GPIO.OUT)
-# GPIO.cleanup()
+    # GPIO pin setup
+    GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(CHANNEL1, GPIO.OUT)
+    GPIO.setup(CHANNEL2, GPIO.OUT)
+    # GPIO.cleanup()
 
 
 
@@ -37,11 +44,11 @@ GPIO.setup(CHANNEL2, GPIO.OUT)
 def GPIO17_callback(channel):
     GPIO.cleanup()
     sys.exit("Quitting Server")
-
-#interrupt detection
-GPIO.add_event_detect(17, GPIO.FALLING, callback=GPIO17_callback, bouncetime=300)
-p1 = GPIO.PWM(CHANNEL1, freq)
-p2 = GPIO.PWM(CHANNEL2, freq)
+if ON_RPI:
+    #interrupt detection
+    GPIO.add_event_detect(17, GPIO.FALLING, callback=GPIO17_callback, bouncetime=300)
+    p1 = GPIO.PWM(CHANNEL1, freq)
+    p2 = GPIO.PWM(CHANNEL2, freq)
 # pulses=[no,no]
 # directions = [0, 0]
 # d=['STOP','STOP']
@@ -114,34 +121,37 @@ DEBUG = True
 def executeCommand(command):
     # print command
     try:
-        l = eval(command[0])
-        if l < -1:
-            l = -1
-        elif l > 1:
-            l = 1
-        if -0.01 < l < 0.01:
-            p1.stop()
-        else:
-            dc = no + l * 0.2
-            p1.start(dc/(20+dc)*100.0)
-            p1.ChangeFrequency(1000.0/(20+dc))
-        r = eval(command[1])
-        if r < -1:
-            r = -1
-        elif r > 1:
-            r = 1
-        if -0.01 < r < 0.01:
-            p2.stop()
-        else:
-            dc = no + r * 0.2
-            p2.start(dc/(20+dc)*100.0)
-            p2.ChangeFrequency(1000.0/(20+dc))
+        if ON_RPI:
+            l = eval(command[0])
+            if l < -1:
+                l = -1
+            elif l > 1:
+                l = 1
+            if -0.01 < l < 0.01:
+                p1.stop()
+            else:
+                dc = no + l * 0.2
+                p1.start(dc/(20+dc)*100.0)
+                p1.ChangeFrequency(1000.0/(20+dc))
+            r = eval(command[1])
+            if r < -1:
+                r = -1
+            elif r > 1:
+                r = 1
+            if -0.01 < r < 0.01:
+                p2.stop()
+            else:
+                dc = no + r * 0.2
+                p2.start(dc/(20+dc)*100.0)
+                p2.ChangeFrequency(1000.0/(20+dc))
+
         t = eval(command[2])
         while t > 0:
             time.sleep(1)
             t -= 1
-        p1.stop()
-        p2.stop()
+        if ON_RPI:
+            p1.stop()
+            p2.stop()
         return True
     except Exception as e:
         print e

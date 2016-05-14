@@ -18,10 +18,12 @@
 # # True
 
 import subprocess
-
+import sys
 import datetime
 
 from firebase.firebase import FirebaseApplication, FirebaseAuthentication
+
+ON_RPI = False if sys.platform.find('darwin') > -1 else True
 
 def postIP():
 
@@ -37,13 +39,21 @@ def postIP():
 
     # data = {'name': 'Ozgur Vatansever', 'age': 26,            'created_at': datetime.datetime.now()}
     try:
-        cmd = "ifconfig |grep 'inet addr:10.'"
-        line =  subprocess.check_output(cmd, shell=True)
-        colon = line.find(':')
-        Bcast = line.find('Bcast')
-        ip = line[colon+1:Bcast].strip()
-    except Exception:
-    	pass
+        if ON_RPI:
+            cmd = "ifconfig |grep 'inet addr:10.'"
+            line =  subprocess.check_output(cmd, shell=True)
+            colon = line.find(':')
+            Bcast = line.find('Bcast')
+            ip = line[colon+1:Bcast].strip()
+        else:
+            cmd = "ifconfig |grep 'inet 10.'"
+            line =  subprocess.check_output(cmd, shell=True)
+            netmask = line.find('netmask')
+            ten = line.find('10')
+            ip = line[ten:netmask].strip()
+
+    except Exception as e:
+    	print e
     
     firebase.delete('/ip', None)
 
