@@ -236,125 +236,29 @@ class ConnectionHandler:
                     print 'received', commandstring
                 command = commandstring.split()
                 stringbuffer = stringbuffer[index+2:]
+
+                self.socket.send("Received %s\r\n" % commandstring)
+
                 success = executeCommand(command)
-                if success:
+                self.socket.settimeout(TIMEOUT)
+                # if success:
                     
-                    self.socket.send("Success %s\r\n" % commandstring)
-                    if DEBUG:
-                        print 'Sent "Success %s\\r\\n" to iPhone' % commandstring
-                    self.socket.settimeout(TIMEOUT)
-                else:
+                #     self.socket.send("Success %s\r\n" % commandstring)
+                #     if DEBUG:
+                #         print 'Sent "Success %s\\r\\n" to iPhone' % commandstring
+                #     self.socket.settimeout(TIMEOUT)
+                # else:
                     
-                    self.socket.send("Failed %s\r\n" % commandstring)
-                    if DEBUG:
-                        print 'Sent "Failed %s\\r\\n" to iPhone' % commandstring
-                    self.socket.settimeout(TIMEOUT)
+                #     self.socket.send("Failed %s\r\n" % commandstring)
+                #     if DEBUG:
+                #         print 'Sent "Failed %s\\r\\n" to iPhone' % commandstring
+                #     self.socket.settimeout(TIMEOUT)
                 self.socket.close()
                 return
-                # c, c2 = checkCommand(command)
-                # if state != AFTER_DATA and c == ILLEGAL:
-                #     # illegal command
-                #     self.socket.send('502 5.5.2 Error: command not recognized\r\n')
-                # elif state == IDLE:
-                #     if c!=HELO:
-                #         self.socket.send('503 Error: need HELO command\r\n')
-                #     else:
-                #         if len(command)<2:
-                #             self.socket.send('501 Syntax: HELO yourhostname\r\n')
-                #         elif len(command)>2:
-                #             self.socket.send('501 Syntax: Space found in hostname after HELO\r\n')
-                #         else:
-                #             clientname = command[1]
-                #             state = AFTER_HELO
-                #             # state transitioned to AFTER_HELO
-                #             self.socket.send("250 zr54\r\n")
-                #             self.socket.settimeout(TIMEOUT)
-                #             starttime = datetime.now()
-                # elif state == AFTER_HELO:
-                #     if c == HELO:
-                #         self.socket.send('503 Error: duplicate HELO\r\n')
-                #     elif c != MAIL_FROM:
-                #         self.socket.send('503 Error: need MAIL FROM command\r\n')
-                #     else:
-                #         if len(command) < 3 + c2:
-                #             self.socket.send('501 Syntax: MAIL FROM <email address>\r\n')
-                #         elif len(command) > 3 + c2:
-                #             i = commandstring.find(command[2+c2], commandstring.find(':')+2)
-                #             badEmail = commandstring[i:]
-                #             self.socket.send('504 5.5.2 <%s>: Sender address rejected\r\n' % badEmail)
-                #         else:
-                #             sender = command[2+c2]
-                #             state = AFTER_FROM
-                #             # state transitioned to AFTER_FROM
-                #             self.socket.send('250 2.1.0 OK\r\n')
-                #             self.socket.settimeout(TIMEOUT)
-                #             starttime = datetime.now()
-                # elif state == AFTER_FROM:
-                #     if c == MAIL_FROM:
-                #         self.socket.send('503 5.5.1 Error: nested MAIL command\r\n')
-                #     elif c != RCPT_TO:
-                #         self.socket.send('503 Error: need RCPT TO command\r\n')
-                #     else:
-                #         if len(command) < 3 + c2:
-                #             self.socket.send('501 Syntax: RCPT TO <email address>\r\n')
-                #         elif len(command) > 3 + c2:
-                #             i = commandstring.find(command[2+c2], commandstring.find(':')+2)
-                #             badEmail = commandstring[i:]
-                #             self.socket.send('504 5.5.2 <%s>: Recipient address invalid\r\n' % badEmail)
-                #         else:
-                #             recipients.append(command[2+c2])
-                #             state = AFTER_TO
-                #             # state transitions to AFTER_TO
-                #             self.socket.send('250 2.1.5 OK\r\n')
-                #             self.socket.settimeout(TIMEOUT)
-                #             starttime = datetime.now()
-                # elif state == AFTER_TO:
-                #     if c == RCPT_TO:
-                #         if len(command) < 3 + c2:
-                #             self.socket.send('501 Syntax: RCPT TO <email address>\r\n')
-                #         elif len(command) > 3 + c2:
-                #             i = commandstring.find(command[2+c2], commandstring.find(':')+2)
-                #             badEmail = commandstring[i:]
-                #             self.socket.send('504 5.5.2 <%s>: Recipient address invalid\r\n' % badEmail)
-                #         else:
-                #             recipients.append(command[2+c2])
-                #             # state is still AFTER_TO
-                #             self.socket.send('250 2.1.5 OK\r\n')
-                #             self.socket.settimeout(TIMEOUT)
-                #             starttime = datetime.now()
-                #     elif c != DATA:
-                #         self.socket.send('503 Error: need DATA or RCPT TO command\r\n')
-                #     else:
-                #         if len(command)>1:
-                #             self.socket.send('501 Syntax: No argument allowed for DATA\r\n')
-                #         else:
-                #             state = AFTER_DATA
-                #             # state transitions to AFTER_DATA
-                #             self.socket.send("354 End data with <CR><LF>.<CR><LF>\r\n")
-                #             self.socket.settimeout(TIMEOUT)
-                #             starttime = datetime.now()
-                # elif state == AFTER_DATA:
-                #     if commandstring == '.':
-                #         with ConnectionHandler.lock:
-                #             while ConnectionHandler.locked:
-                #                 ConnectionHandler.cond.wait()
-                #             ConnectionHandler.locked = True
-                #             ConnectionHandler.count += 1
-                #             tmpcount = ConnectionHandler.count
-                           
-                #             ConnectionHandler.locked = False
-                #             ConnectionHandler.cond.notify()
-                #         self.socket.send("250 OK: delivered message %d\r\n" % tmpcount)
-                #         state = AFTER_HELO
-                #         self.socket.settimeout(TIMEOUT)
-                #         starttime = datetime.now()
-                #         recipients = []
-                #         data = []
-                #     else:
-                #         data.append(commandstring)
+               
 
             except socket.timeout:
-                self.socket.send('From RPi server Error: timeout exceeded\r\n')
+                # self.socket.send('From RPi server Error: timeout exceeded\r\n')
                 self.socket.close()
                 return
             except socket.error as e:
