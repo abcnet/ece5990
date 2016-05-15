@@ -143,7 +143,11 @@ def writeCommand(command):
 def executeCommand():
     global timeleft
     while True:
-        
+        if timeleft <= 0:
+            if ON_RPI:
+                p1.stop()
+                p2.stop()
+            time.sleep(0.1)
         if ON_RPI:
             l = left
             if l < -1:
@@ -152,7 +156,7 @@ def executeCommand():
                 l = 1
             if -0.01 < l < 0.01:
                 p1.stop()
-            else:
+            elif timeleft > 0:
                 dc = no + l * 0.2
                 p1.start(dc/(20+dc)*100.0)
                 p1.ChangeFrequency(1000.0/(20+dc))
@@ -163,7 +167,7 @@ def executeCommand():
                 r = 1
             if -0.01 < r < 0.01:
                 p2.stop()
-            else:
+            elif timeleft > 0:
                 dc = no + r * 0.2
                 p2.start(dc/(20+dc)*100.0)
                 p2.ChangeFrequency(1000.0/(20+dc))
