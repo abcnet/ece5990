@@ -20,6 +20,8 @@
 import subprocess
 import sys
 import datetime
+import socket
+
 
 from firebase.firebase import FirebaseApplication, FirebaseAuthentication
 
@@ -46,11 +48,11 @@ def postIP():
             Bcast = line.find('Bcast')
             ip = line[colon+1:Bcast].strip()
         else:
-            cmd = "ifconfig |grep 'inet 10.'"
-            line =  subprocess.check_output(cmd, shell=True)
-            netmask = line.find('netmask')
-            ten = line.find('10')
-            ip = line[ten:netmask].strip()
+            # cmd = "ifconfig |grep 'inet '"
+            # line =  subprocess.check_output(cmd, shell=True)
+            # netmask = line.find('netmask')
+            # ten = line.find('inet')
+            ip = socket.gethostbyname(socket.gethostname())
 
     except Exception as e:
     	print e
