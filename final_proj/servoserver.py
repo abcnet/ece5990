@@ -106,7 +106,7 @@ from shutil import copyfile
 
 from test1 import postIP
 
-nthreads = 2
+nthreads = 32
 # backupGroup = 32
 IDLE = 0
 AFTER_HELO = 1
@@ -114,15 +114,38 @@ AFTER_FROM = 2
 AFTER_TO = 3
 AFTER_DATA = 4
 
-TIMEOUT = 10.0
+TIMEOUT = 10000.0
 
 DEBUG = True
 
-def executeCommand(command):
-    # print command
+left = 0
+right = 0
+timeleft = 0
+
+def writeCommand(command):
+    print 'writing command'
+    global left
+    global right
+    global timeleft
     try:
+        left = eval(command[0])
+            
+        right = eval(command[1])
+           
+
+        timeleft = eval(command[2])
+        print 'done writing command'
+        return True
+    except Exception as e:
+        print e
+        return False
+
+def executeCommand():
+    global timeleft
+    while True:
+        
         if ON_RPI:
-            l = eval(command[0])
+            l = left
             if l < -1:
                 l = -1
             elif l > 1:
@@ -133,7 +156,7 @@ def executeCommand(command):
                 dc = no + l * 0.2
                 p1.start(dc/(20+dc)*100.0)
                 p1.ChangeFrequency(1000.0/(20+dc))
-            r = eval(command[1])
+            r = right
             if r < -1:
                 r = -1
             elif r > 1:
@@ -144,19 +167,12 @@ def executeCommand(command):
                 dc = no + r * 0.2
                 p2.start(dc/(20+dc)*100.0)
                 p2.ChangeFrequency(1000.0/(20+dc))
-
-        t = eval(command[2])
-        while t > 0:
+        while timeleft > 0:
             time.sleep(1)
-            t -= 1
+            timeleft -= 1
         if ON_RPI:
             p1.stop()
             p2.stop()
-        return True
-    except Exception as e:
-        print e
-        return False
-
 
 
 # def checkCommand(l):
@@ -205,8 +221,8 @@ class ConnectionHandler:
 
     def handle(self):
         # global f
-        state = IDLE
-        self.socket.send("From RPi server: connected\r\n")
+        # state = IDLE
+        # self.socket.send("From RPi server: connected\r\n")
         self.socket.settimeout(TIMEOUT)
         starttime = datetime.now()
         stringbuffer = ''
@@ -217,17 +233,22 @@ class ConnectionHandler:
         while True:
             try:
                 while stringbuffer.find('\r\n')==-1:
+                    # print 'cannot find \\r\\n'
                     # collect TCP stream until <CR><LF> is reached
+                    # print stringbuffer
                     stringbuffer += self.socket.recv(16)
+                    # print 'timenow'
                     timenow = datetime.now()
                     # calculate new timeout time
                     elapsed = (timenow - starttime).total_seconds()
+                    # print 'elpased'
                     if elapsed>=TIMEOUT:
-                        self.socket.send('From RPi server Error: timeout exceeded\r\n')
+                        # self.socket.send('From RPi server Error: timeout exceeded\r\n')
                         self.socket.close()
                         return
                     else:
                         self.socket.settimeout(TIMEOUT - elapsed)
+                    # print 'end of inner while'
                 if DEBUG:
                     print stringbuffer
                 index = stringbuffer.find('\r\n')
@@ -237,9 +258,12 @@ class ConnectionHandler:
                 command = commandstring.split()
                 stringbuffer = stringbuffer[index+2:]
 
-                self.socket.send("Received %s\r\n" % commandstring)
+                
 
-                success = executeCommand(command)
+                success = writeCommand(command)
+                print 'about to send received'
+                self.socket.send("Received %s\r\n" % commandstring)
+                print 'received sent'
                 self.socket.settimeout(TIMEOUT)
                 # if success:
                     
@@ -253,8 +277,8 @@ class ConnectionHandler:
                 #     if DEBUG:
                 #         print 'Sent "Failed %s\\r\\n" to iPhone' % commandstring
                 #     self.socket.settimeout(TIMEOUT)
-                self.socket.close()
-                return
+                # self.socket.close()
+                # return
                
 
             except socket.timeout:
@@ -291,6 +315,9 @@ def serverloop():
         # print('Running thread %d' % i)
         thread = Thread(target=serverloop_singlethread)
         thread.start()
+
+    servoThread = Thread(target=executeCommand)
+    servoThread.start()
 
 if __name__ == '__main__':
     if DEBUG:
