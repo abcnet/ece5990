@@ -148,7 +148,7 @@ def executeCommand():
                 p1.stop()
                 p2.stop()
             time.sleep(0.1)
-        if ON_RPI:
+        if ON_RPI and timeleft > 0:
             l = left
             if l < -1:
                 l = -1
@@ -172,12 +172,9 @@ def executeCommand():
                 p2.start(dc/(20+dc)*100.0)
                 p2.ChangeFrequency(1000.0/(20+dc))
         if timeleft > 0:
-            time.sleep(0.5)
-            timeleft -= 0.5
-        if ON_RPI:
-            p1.stop()
-            p2.stop()
-
+            time.sleep(0.1)
+            timeleft -= 0.1
+        
 
 # def checkCommand(l):
 #     # print l
