@@ -171,9 +171,9 @@ def executeCommand():
                 dc = no + r * 0.2
                 p2.start(dc/(20+dc)*100.0)
                 p2.ChangeFrequency(1000.0/(20+dc))
-        while timeleft > 0:
-            time.sleep(1)
-            timeleft -= 1
+        if timeleft > 0:
+            time.sleep(0.5)
+            timeleft -= 0.5
         if ON_RPI:
             p1.stop()
             p2.stop()
