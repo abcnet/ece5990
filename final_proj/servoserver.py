@@ -9,6 +9,15 @@ import os
 import time
 import threading
 
+import picamera
+
+#initialize camera module
+camera = picamera.PiCamera()
+camera.resolution = (1280, 720)
+camera.framerate = 24
+camera.vflip = True
+camera.hflip = True
+
 
 ON_RPI = False if sys.platform.find('darwin') > -1 else True
 if ON_RPI:
