@@ -3,10 +3,12 @@ import time
 import picamera
 import sys
 import errno
+from socket import error as socket_error
 
 #Define the streaming method
-def camera_stream():    
-    while 1:
+def camera_stream(control):    
+    if (control == 1):
+    while control:
         #Create a TCP socket on the Raspberry Pi
         tcp_sock = socket.socket()
         tcp_ip = ''
@@ -35,16 +37,17 @@ def camera_stream():
         try:
             while 1:
                 camera.start_recording(file, format='h264')
-                camera.wait_recording(1)
+                camera.wait_recording(15)
                 camera.stop_recording()
                 #print 'Wrote data to connection'
     
-        except Exception:
+        except:
             #conn.close()
-            #tcp_sock.close()
+            tcp_sock.close()
             camera.close()
                
         time.sleep(0.1)
+
 
 camera_stream()
 
