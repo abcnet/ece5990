@@ -79,7 +79,7 @@ from shutil import copyfile
 from test1 import postIP
 
 nthreads = 16
-nthreads2 = 8
+nthreads2 = 32
 # backupGroup = 32
 IDLE = 0
 AFTER_HELO = 1
@@ -100,6 +100,11 @@ doorOpened = False
 doorTimeStamp = datetime.now()
 
 DOOR_TIME_OUT = 5
+try:
+    f = open('location','r')
+    x, y, angle = map(eval,f.readline().split())
+except:
+    x, y, angle = 0, 0, 0
 
 def iPhoneConnect():
     global iPhoneConnected
@@ -404,7 +409,7 @@ def serverloop():
     # bind the socket to the local loopback IP address and special port
     serversocket2.bind((host, port2))
     # start listening with a backlog of 5 connections
-    serversocket2.listen(5)
+    serversocket2.listen(1)
 
     def serverloop_singlethread():
 
