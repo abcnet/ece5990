@@ -78,8 +78,8 @@ from shutil import copyfile
 
 from test1 import postIP
 
-nthreads = 32
-nthreads = 2
+nthreads = 16
+nthreads2 = 8
 # backupGroup = 32
 IDLE = 0
 AFTER_HELO = 1
@@ -96,6 +96,10 @@ right = 0
 timeleft = 0
 iPhoneConnected = False
 doorConnected = False
+doorOpened = False
+doorTimeStamp = datetime.now()
+
+DOOR_TIME_OUT = 5
 
 def iPhoneConnect():
     global iPhoneConnected
@@ -125,10 +129,15 @@ def parseCommand(command):
     try:
 
         if command[0] == 'c':
-            if doorConnected:
-                pass
+            timenow = datetime.now()
+            elapsed = (timenow - doorTimeStamp).total_seconds()
+            if doorConnected and elapsed < DOOR_TIME_OUT:
+                if doorOpened:
+                    return 4
+                else:
+                    return 3
             else:
-                pass
+                return 2
         else:
             left = eval(command[0])
                 
@@ -137,10 +146,10 @@ def parseCommand(command):
 
             timeleft = eval(command[2])
             print 'done writing command'
-        return True
+        return 0
     except Exception as e:
         print e
-        return False
+        return -1
 
 def executeCommand():
     global timeleft
@@ -178,10 +187,16 @@ def executeCommand():
             timeleft -= 0.1
         
 def door(command):
+    global doorOpened
+    global doorTimeStamp
     try:
         if command[0] == '1':
+            doorOpened = True
+            doorTimeStamp = datetime.now()
             return 1
         elif command[0] == '0':
+            doorOpened = False
+            doorTimeStamp = datetime.now()
             return 0
 
     except Exception as e:
@@ -240,10 +255,21 @@ class ConnectionHandler:
 
                 
 
-                success = parseCommand(command)
-                print 'about to send received'
-                self.socket.send("Received %s\r\n" % commandstring)
-                print 'received sent'
+                result = parseCommand(command)
+                if DEBUG:
+                    print 'about to send received'
+                if result == -1:
+                    self.socket.send("Invalid command %s\r\n" % commandstring)
+                elif result == 0:
+                    self.socket.send("Received %s\r\n" % commandstring)
+                elif result == 2:
+                    self.socket.send("Door module not connected\r\n" )
+                elif result == 3:
+                    self.socket.send("Door closed\r\n" )
+                elif result == 4:
+                    self.socket.send("Door opened\r\n" )
+                if DEBUG:
+                    print 'received sent'
                 self.socket.settimeout(TIMEOUT)
                 # if success:
                     
@@ -325,11 +351,11 @@ class ConnectionHandler2:
 
 
                 
-
+                door(command)
                 # success = 
                 print 'Wifi Thread: about to send received'
                 self.socket.send("Received %s\r\n" % commandstring)
-                print 'Wifi Thread: received sent'
+                print 'Wifi Thread: received sent', doorTimeStamp
                 self.socket.settimeout(TIMEOUT)
                 # if success:
                     
@@ -404,8 +430,10 @@ def serverloop():
     servoThread = Thread(target=executeCommand)
     servoThread.start()
 
-    wifiThread = Thread(target=serverloop_singlethread2)
-    wifiThread.start()
+    for i in range(nthreads2):
+
+        wifiThread = Thread(target=serverloop_singlethread2)
+        wifiThread.start()
 
 if __name__ == '__main__':
     if DEBUG:
