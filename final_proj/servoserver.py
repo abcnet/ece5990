@@ -95,6 +95,7 @@ left = 0
 right = 0
 timeleft = 0
 iPhoneConnected = False
+doorConnected = False
 
 def iPhoneConnect():
     global iPhoneConnected
@@ -106,20 +107,36 @@ def iPhoneDisconnect():
     if DEBUG:
         print '------------iPhone DISCONNECTED-------'
     iPhoneConnected = False
-
-def writeCommand(command):
+def doorConnect():
+    global doorConnected
+    if DEBUG:
+        print '-------------Door connected-----------'
+    doorConnected = True
+def doorDisconnect():
+    global doorConnected
+    if DEBUG:
+        print '--------------Door DISCONNECED--------------'
+    doorConnected = False
+def parseCommand(command):
     print 'writing command'
     global left
     global right
     global timeleft
     try:
-        left = eval(command[0])
-            
-        right = eval(command[1])
-           
 
-        timeleft = eval(command[2])
-        print 'done writing command'
+        if command[0] == 'c':
+            if doorConnected:
+                pass
+            else:
+                pass
+        else:
+            left = eval(command[0])
+                
+            right = eval(command[1])
+               
+
+            timeleft = eval(command[2])
+            print 'done writing command'
         return True
     except Exception as e:
         print e
@@ -163,10 +180,13 @@ def executeCommand():
 def door(command):
     try:
         if command[0] == '1':
-            pass
+            return 1
+        elif command[0] == '0':
+            return 0
 
     except Exception as e:
         print e
+        return -1
 
 class ConnectionHandler:
     """Handles a single client request"""
@@ -220,7 +240,7 @@ class ConnectionHandler:
 
                 
 
-                success = writeCommand(command)
+                success = parseCommand(command)
                 print 'about to send received'
                 self.socket.send("Received %s\r\n" % commandstring)
                 print 'received sent'
@@ -267,6 +287,7 @@ class ConnectionHandler2:
         # state = IDLE
         # self.socket.send("From RPi server: connected\r\n")
         self.socket.settimeout(TIMEOUT)
+        doorConnect()
         starttime = datetime.now()
         stringbuffer = ''
         clientname = ''
@@ -329,10 +350,12 @@ class ConnectionHandler2:
             except socket.timeout:
                 # self.socket.send('From RPi server Error: timeout exceeded\r\n')
                 self.socket.close()
+                doorDisconnect()
                 return
             except socket.error as e:
                 print e
                 self.socket.close()
+                doorDisconnect()
                 return
 
 def serverloop():
