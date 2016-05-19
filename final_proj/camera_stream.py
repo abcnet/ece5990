@@ -25,7 +25,7 @@ def camera_stream():
             with  picamera.PiCamera() as camera:
                 
                 camera.resolution = (640,480)
-                camera.framerate = 24        
+                camera.framerate = 30
                 camera.vflip = True
                 camera.hflip = True
 
